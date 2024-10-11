@@ -9,11 +9,26 @@
   </head>
   <body>
     <header>
-      <img src="assets/images/logo.png" class="logo" />
+      <a href="index.html">
+        <img src="assets/images/logo.png" class="logo" />
+      </a>
     </header>
     <main id="main">
       <div class="photograph-header">
         <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
+      </div>
+      <div class="media-gallery" id="media-gallery"></div>
+      <!-- Lightbox HTML structure (hidden initially) -->
+      <div id="lightbox" class="lightbox" style="display:none;">
+        <img class="close-lightbox" src="assets/icons/close20.svg" />
+        <div class="lightbox-content">
+          <img id="lightbox-img" class="lightbox-img" src="" alt="">
+          <video id="lightbox-video" class="lightbox-video" controls style="display:none;">
+            <source id="lightbox-video-source" src="" type="video/mp4">
+          </video>
+        </div>
+        <button id="prev-btn" class="prev">&lsaquo;</button>
+        <button id="next-btn" class="next">&rsaquo;</button>
       </div>
     </main>
     <div id="contact_modal">
@@ -31,7 +46,7 @@
 				</form>
 			</div>
 		</div>
-    <script src="/scripts/pages/photographer.js"></script>
-    <script src="/scripts/utils/contactForm.js"></script>
+    <script src="scripts/pages/photographer.js"></script>
+    <script src="scripts/utils/contactForm.js"></script>
   </body>
 </html>

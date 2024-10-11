@@ -5,7 +5,6 @@ body {
     margin: 0;
 }
 
-
 header {
     display: flex;
     flex-direction: row;
@@ -26,8 +25,9 @@ h1 {
 
 .photographer_section {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 70px;
+    grid-template-columns: 2fr 2fr 2fr;
+    column-gap: 10px;
+    row-gap: 50px;
     margin-top: 100px;
 }
 
@@ -37,14 +37,48 @@ h1 {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    width:100%;
+    height: auto;
 }
 
 .photographer_section article h2 {
+    margin-bottom: 5px;
     color: #D3573C;
-    font-size: 36px;
+    font-size: 26px;
 }
 
-.photographer_section article img {
-    height: 200px;
-    width: 200px;
+.photographer_section article .circle {
+    width: 200px;          /* Circle size */
+    height: 200px;         /* Circle size */
+    border-radius: 50%;    /* Makes the container circular */
+    overflow: hidden;      /* Ensures the image doesn't overflow the circle */
+    display: flex;         /* To center the image inside the circle */
+    justify-content: center;
+    align-items: center;
+}
+
+.photographer_section article .circle img {
+    width: 150%;           /* Enlarges the image within the circle */
+    height: auto;          /* Maintain aspect ratio */
+    transform: scale(1.5); /* Scale the image up */
+}
+
+.photographer_section article a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.photographer_section article p {
+    margin: 0px 0 5px 0;
+    font-size: 0.8em;
+}
+
+.photographer_section article .city {
+    color: #D3573C;
+    font-size: 1em;
+}
+
+.photographer_section article .prix {
+    color: #a19f9f;
 }
