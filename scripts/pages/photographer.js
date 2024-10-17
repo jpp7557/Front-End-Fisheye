@@ -34,8 +34,14 @@ async function getPhotographerWorks() {
 
     // Filter the media works that belong to this photographer
     const photographerWorks = media.filter(item => item.photographerId == photographerId);
+    const p_portrait = photographer.portrait;
     console.log("in getPhotographerWorks", photographerWorks, firstName); 
-    return { photographerWorks, firstName};
+    return { photographerWorks, firstName, };
+}
+
+function setHeaderDom() {
+    const photogrHeader = document.querySelector('photographe-header');
+
 }
 
 function setMediaDom(works, f_name) {
@@ -74,8 +80,6 @@ function setMediaDom(works, f_name) {
         mediaGallery.appendChild(mediaItem);
     })
 }
-
-
 
 function displayMedia(works,f_name) {
 

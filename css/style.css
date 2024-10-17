@@ -48,8 +48,8 @@ h1 {
 }
 
 .photographer_section article .circle {
-    width: 200px;          /* Circle size */
-    height: 200px;         /* Circle size */
+    width: 250px;          /* Circle size */
+    height: 250px;         /* Circle size */
     border-radius: 50%;    /* Makes the container circular */
     overflow: hidden;      /* Ensures the image doesn't overflow the circle */
     display: flex;         /* To center the image inside the circle */
@@ -58,9 +58,10 @@ h1 {
 }
 
 .photographer_section article .circle img {
-    width: 150%;           /* Enlarges the image within the circle */
-    height: auto;          /* Maintain aspect ratio */
-    transform: scale(1.5); /* Scale the image up */
+    width: 250px;           /* Enlarges the image within the circle */
+    height: 250px;          /* Maintain aspect ratio */
+    transform: scale(1.3); /* Scale the image up */
+    object-fit: cover;
 }
 
 .photographer_section article a {
