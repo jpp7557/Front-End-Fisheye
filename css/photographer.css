@@ -2,10 +2,35 @@
     display: none;
 }
 
-.photograph-header {
+.photographe-header {
     background-color: #FAFAFA;
     height: 300px;
     margin: 0 100px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    column-gap: 30px;
+    align-items: center;
+    padding: 0 30px;
+}
+
+#ph-bio-data {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+#ph-bio-data h2 {
+    color: #db8876;
+}
+
+#photo-portrait {
+    justify-content: center;
+}
+.photographe-header img {
+    height:200px;
+    width: 200px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .contact_button {
@@ -80,17 +105,15 @@ form input {
     grid-template-columns: repeat(3, 1fr); /* 3 columns */
     column-gap: 80px; /* Spacing between media items */
     row-gap: 20px;
-    padding: 20px;
+    margin: 20px 100px;
 }
 
 .media-item {
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    padding: 10px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    /*text-align: center;*/
+
 }
 
 .media-item img,
