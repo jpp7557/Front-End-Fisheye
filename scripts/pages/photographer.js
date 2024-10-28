@@ -1,56 +1,25 @@
-//Mettre le code JavaScript lié à la page photographer.html
 import { getJsonArrays } from '../api.js';  // getJsonArrays() to Fetch items in the JSON file 
-
-
+import { initLightbox } from '../pages/lightbox.js';
 
 // Retrieve the photographer id from the URL
-function getPhotographerIdFromUrl() {
+async function getPhotographerIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id');
+    return urlParams.get('id')
 }
 
 /************************************************************* */
-/*
-function displayData(photographers) {
-    const photographersSection = document.querySelector(".photographer_section");
-    photographers.forEach((photographer) => {
-        const photographerModel = photographerTemplate(photographer);
-        const userCardDOM = photographerModel.setUserCardDOM();
-        console.log("displayData, userCardDOM ", userCardDOM);
-        photographersSection.appendChild(userCardDOM);
-        console.log("displayData forEach photographer :", photographer);
-
-    });
-    relookArticle();
-}
-async function init() {
-    const dataFullPath ='data/photographers.json'
-    // Récupère les datas des photographes
-    const { photographers } = await getJsonArrays(dataFullPath);
-    console.log("init => photographers :", photographers);
-    displayData(photographers);
-}
-*/
-
-/*
-async function mediaInit() {  //cette fonction est une copie à supprimer
-    
-    // Récupère les data du photographe
-    let {photographerWorks: p_works, firstName: f_name } = await getPhotographerWorks();
-
-    displayMedia(p_works, f_name);    
-}
-*/
-/****************************************************** */
-
 
 // Filter the photographer’s media works based on the photographerId
 async function getPhotographerWorks() {
-    // Get photographer's id from URL
-    const photographerId = getPhotographerIdFromUrl();
-    // Retrieve data (bio and media) of photographers
+    console.log("*** ToTo:  function getPhotographerWorks()");
     const dataFullPath ='data/photographers.json'
     const { photographers, media } = await getJsonArrays(dataFullPath);
+    // Get photographer's id from URL
+    const photographerId = await getPhotographerIdFromUrl();
+
+    // Retrieve data (bio and media) of photographers
+    console.log("photographerId :", photographerId);
+
     // Find the photographer with the retrieved id
     const photographer = photographers.find(p => p.id == photographerId);
 
@@ -106,33 +75,40 @@ function displayHeaderDom(auteur) {
 function createMediaPage(works, name) {
 
     console.log("in createMediaPage : ",name);
-
     const firstName = name.split(' ')[0];
  
     //  get <div id='media-gallery'>
     const mediaGallery = document.getElementById('media-gallery');
-        // Loop through works and create DOM elements for each one
-    works.forEach(item => {
-        // creating <div class="media-item">
-        const mediaItem = document.createElement('div'); 
-        mediaItem.classList.add('media-item');        // add a class to div
+    mediaGallery.innerHTML = ''; // Clear the gallery from previous contents
 
-        let workModel = createMediaTemplate(item, firstName);
-        let workDOM = workModel.createMediaDom();
-        mediaItem.appendChild(workDOM);
+    const lightboxController = initLightbox(works, name);
 
-        let title = document.createElement('p');
-        title.textContent = item.title;
-        mediaItem.appendChild(title);
+    works.forEach((item, index) => {        
+            console.log(`Item at index ${index}:`, item);
+        const workModel = createMediaTemplate(item, firstName);
+        const { mediaItemAnchor, mediaItem } = workModel.createMediaDom(); // Call the method to get the media elements
+        console.log("toto", mediaItemAnchor, mediaItem );
+        // Add event listener to open lightbox when clicked
+        mediaItemAnchor.addEventListener('click', (e) => {
+            console.log("EventListener index: ", index);
+            e.preventDefault();  // Prevent anchor navigation
+            lightboxController.openLightbox(index); // Open lightbox with selected item
+        });
+        
         // Append each media item to the gallery
         mediaGallery.appendChild(mediaItem);
     })
 }
 
+function setContactName(name) {
+    const contactName = document.getElementById('contact-name');
+    contactName.textContent = name;
+}
+
 function displayMedia(works,f_name) {
 
-    console.log("in displayMedia : ",works,f_name);
-    // Assuming there's a div or section with the 'media-gallery' id
+    console.log("in displayMedia f_name : ",f_name);
+    // Searching div or section with the 'media-gallery' id
     const mediaGallery = document.getElementById('media-gallery');
     mediaGallery.innerHTML = ''; // Clear the gallery
     createMediaPage(works, f_name);
@@ -141,23 +117,23 @@ function displayMedia(works,f_name) {
 function displayFullMediaPage(p_works, p_photographer) {
     console.log("in displayFullMediaPage : calling WorksTemplate ...");
     const photographePageHeader = WorksTemplate();
-    console.log("in displayFullMediaPage : photographePageHeader ...", photographePageHeader);
-    const htmlPage = photographePageHeader.createPageDom();
-    console.log("htmlPage : ", htmlPage);
+
+    photographePageHeader.createPageDom();
     displayHeaderDom(p_photographer);
     displayMedia(p_works,p_photographer.name);
-}
+    setContactName(p_photographer.name);
+} 
 
 async function mediaInit() {
     // Récupère les data du photographe
-    let {photographer: p_photographer, photographerWorks: p_works } = await getPhotographerWorks();
-    console.log("******************  in asyn function mediaInit() name :", p_photographer.name);
-    displayFullMediaPage(p_works, p_photographer);    
+    const {photographer: p_photographer, photographerWorks: p_works } = await getPhotographerWorks();
+    displayFullMediaPage(p_works, p_photographer);
+    const contactName = document.getElementById('contact-name');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    mediaInit();
+    if (window.location.pathname.includes("photographer.html")) {
+        console.log("*** Calling     mediaInit()");
+        mediaInit();
+    }
 });
-
-
-//mediaInit();

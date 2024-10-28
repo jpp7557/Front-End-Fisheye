@@ -56,23 +56,21 @@ function WorksTemplate() {
 
     function createPageDom() {
 
-        // Header Dom
+        // Create Header Dom
         const $photographeHeader = document.querySelector(".photographe-header");    
         console.log(" in WorksTemplate, photographeHeader: ",  $photographeHeader);
-        const $elemBio = document.createElement('div');
+        const $elemBio = document.createElement('section');
         $elemBio.id = "ph-bio-data";
 
         const $elemBtn = document.createElement('div');
         const $contactBtn = document.querySelector('.contact_button');
         const $divImg = document.createElement('div');
         const $phPortrait = document.createElement('img');
-        //img.setAttribute('src', `assets/photographers/${photographer.portrait}`);
-        //$phPortrait.setAttribute('src', 'assets/photographers/MimiKeel.jpg');
-        //$phPortrait.setAttribute('alt', 'Mimi_Keel');
     
         $elemBtn.appendChild($contactBtn);
         $elemBtn.id="btn-contact";
         $elemBtn.style.display = 'flex';
+        $elemBtn.style.justifyContent = 'center';
     
         $divImg.appendChild($phPortrait);
         $divImg.id="div-img";
@@ -93,8 +91,8 @@ function WorksTemplate() {
         $photographeHeader.appendChild($elemBtn);
         $photographeHeader.appendChild($divImg);
 
-        // create works Dom: <div id='media-gallery'>
-        const $worksPage = document.createElement('div')
+        // create media gallery div: <div id='media-gallery'>
+        const $worksPage = document.createElement('section')
         $worksPage.setAttribute('id', 'media-gallery');
 
         console.log("$photographeHeader :", $photographeHeader);
@@ -104,29 +102,108 @@ function WorksTemplate() {
 
 }
 
-function createMediaTemplate(work,f_name) {
-    console.log("************  createMediaTemplate : ", work, f_name);
-    function createMediaDom() {
+function imageTemplate() {
+    let media = document.createElement('img');
 
-        let media;
-        // the media could be an image or video
-        if (work.image) {
-            const img = document.createElement('img');
-            img.setAttribute('src', `assets/Sample_Photos/${f_name}/${work.image}`);
-            img.setAttribute('alt', work.title);
-            //mediaItem.appendChild(img);
-            media = img;
-        } else if (work.video) {
-            const video = document.createElement('video');
-            video.setAttribute('controls', true);
-            const source = document.createElement('source');
-            source.setAttribute('src', `assets/Sample_Photos/${f_name}/${work.video}`);
-            source.setAttribute('type', 'video/mp4');
-            video.appendChild(source);
-            media = video;
-        }
+    function createImage(work, f_name) {
+        media.setAttribute('src', `assets/Sample_Photos/${f_name}/${work.image}`);
+        media.setAttribute('alt', work.title);
+        return media
+    }
+    return {createImage} ;
+}
+
+function videoTemplate() {
+    let media = document.createElement('video');
+
+    function createVideo(work, f_name) {
+        media.setAttribute('src', `assets/Sample_Photos/${f_name}/${work.video}`);
+        media.setAttribute('type', 'video/mp4');
+        // Additional attributes (autoplay, mute, loop) can be set if necessary
         return media;
     }
-    return {createMediaDom}
+    return {createVideo};
+}
 
+// Factory Function to create media (image or video)
+function mediaFactory(work, f_name) {
+
+    let media;
+    if (work.image) {
+        mediaTemplate = imageTemplate();
+        media = mediaTemplate.createImage(work, f_name);
+    } else if (work.video) {
+        mediaTemplate = videoTemplate();
+        media = mediaTemplate.createVideo(work, f_name);
+    } else {
+        // Throw an error if neither image nor video is provided
+        throw new Error("Invalid media type: must be either an image or a video");
+    }
+    return media;
+}
+
+// Main function to create the media template
+function createMediaTemplate(work, f_name) {
+    console.log("************  createMediaTemplate : f_name ", f_name);
+
+    // creating <div class="media-item">
+    const mediaItem = document.createElement('article');
+    mediaItem.classList.add('media-item');  // Add a class to the div
+    const playIcon = setDomToPlayIcon('assets/icons/play.svg', '35px', '35px', '0'); // Play icon
+
+    // Factory Method that creates and returns the media element (img or video)
+    function createMediaDom() {
+        const mediaItemAnchor = document.createElement('a');
+        mediaItemAnchor.setAttribute('href', "#");
+        mediaItemAnchor.setAttribute('id', 'media-anchor');
+
+        // Calling mediaFactory() to create the media element (img or video)
+        // Declare media outside the try block so that it's accessible outside the block afterward
+
+        let media; 
+        try {
+            media = mediaFactory(work, f_name);
+            console.log("Media element created:", media);
+        } catch (error) {
+            console.error("Error creating media element:", error.message);
+            return; // Exit the function if an error occurs to avoid further issues
+        }
+        
+        console.log("media type is :", media.tagName);
+
+        if (media.tagName === 'VIDEO') {     // media must be accessible here outside the try block
+            mediaItem.appendChild(playIcon); // Append the play icon to video media
+        }
+
+        const title = document.createElement('p');
+        title.textContent = work.title;
+
+        mediaItemAnchor.appendChild(media);  // Append <img> or <video> to the anchor
+        mediaItem.appendChild(mediaItemAnchor);
+        mediaItem.appendChild(title);
+        
+
+        return {mediaItemAnchor, mediaItem} ;
+    }
+
+    return { createMediaDom };
+}
+
+function setDomToPlayIcon(iconPath, iconw, iconh, zInd) {
+
+    const pIcon = document.createElement('img');
+    pIcon.classList.add('play-icon');
+    pIcon.setAttribute('src', iconPath);
+    pIcon.setAttribute('alt', 'Play Icon');
+    pIcon.style.width = iconw;
+    pIcon.style.height = iconh;
+    pIcon.style.opacity = 0.6;
+    pIcon.style.position = 'absolute';
+    pIcon.style.top = '40%';
+    pIcon.style.left = '50%';
+    pIcon.style.transform = 'translate(-50%, 0%)';
+    pIcon.style.pointerEvents = 'none';
+    pIcon.style.zIndex = zInd;
+    pIcon.style.objectFit = 'cover';
+    return pIcon;
 }

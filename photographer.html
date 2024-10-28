@@ -14,12 +14,13 @@
       </a>
     </header>
     <main id="main">
-      <div class="photographe-header">
-        <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
-      </div>
-      <div class="media-gallery" id="media-gallery"></div>
+          <section class="photographe-header" >
+            <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
+          </section>
+          <section class="media-gallery" id="media-gallery"></section>
+          <div class="bground"></div>
       <!-- Lightbox HTML structure (hidden initially) -->
-      <div id="lightbox" class="lightbox" style="display:none;">
+      <section id="lightbox" class="lightbox" style="display:none;">
         <img class="close-lightbox" src="assets/icons/close20.svg" />
         <div class="lightbox-content">
           <img id="lightbox-img" class="lightbox-img" src="" alt="">
@@ -29,7 +30,7 @@
         </div>
         <button id="prev-btn" class="prev">&lsaquo;</button>
         <button id="next-btn" class="next">&rsaquo;</button>
-      </div>
+      </section>
     </main>
     <div id="contact_modal">
 			<div class="modal">
@@ -37,17 +38,32 @@
           <h2>Contactez-moi</h2>
           <img src="assets/icons/close.svg" onclick="closeModal()" />
         </header>
+        <p id="contact-name"></p>
 				<form>
 					<div>
-						<label>Prénom</label>
+						<!--
+            <label>Prénom</label>
 						<input />
-					</div>
+            -->
+              <label>Prénom</label><br>
+              <input class="text-control" type="text" id="first" name="first" /><br>
+            <!--nom-->
+              <label>Nom</label><br>
+              <input class="text-control" type="text" id="last" name="last" require /><br>
+            <!--email-->
+              <label>E-mail</label><br>
+              <input class="text-control" type="email" id="email" name="email" required /><br>
+            <!-- Message -->  
+              <label>Votre Message</label><br>
+              <textarea id="message" name="message" rows="5" cols="40"></textarea>
+            </div>
           <button class="contact_button">Envoyer</button>
 				</form>
 			</div>
 		</div>
     <script type="module" src="scripts/api.js"></script>
     <script src="scripts/templates/photographer.js"></script>
+    <script type="module" src="scripts/pages/lightbox.js"></script>
     <script type="module" src="scripts/pages/photographer.js"></script>
     <script src="scripts/utils/contactForm.js"></script>
   </body>

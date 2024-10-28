@@ -1,3 +1,14 @@
+:root {
+    --font-default: "DM Sans", Arial, Helvetica, sans-serif;
+    --font-slab: var(--font-default);
+    --modal-duration: 1s;
+    --modal-left: 20%
+}
+
+* {
+    box-sizing: border-box;
+}
+
 #contact_modal {
     display: none;
 }
@@ -46,6 +57,18 @@
     cursor: pointer;
 }
 
+.bground {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(26, 39, 156, 0.4);
+  }
+  
 .modal {
     border-radius: 5px;
     background-color: #DB8876;
@@ -56,6 +79,12 @@
     justify-content: space-between;
     padding: 35px;
     margin: auto;
+    animation: modalopen var(--modal-duration) forwards;
+    position:relative;
+    z-index: 200;
+    position: fixed;
+    top: 0;    /* Start at the bottom */
+    left: 25%;
 }
 
 .modal header {
@@ -68,9 +97,16 @@
 }
 
 .modal header h2 {
-    font-size: 64px;
+    font-size: 54px;
     font-weight: normal;
     text-align: center;
+}
+
+#contact-name {
+    width: 100%;
+    display:flex;
+    justify-content: left;
+    font-size: 32px;
 }
 
 form {
@@ -82,7 +118,7 @@ form {
 
 form label {
     color: #312E2E;
-    font-size: 36px;
+    font-size: 32px;
 }
 
 form div {
@@ -98,22 +134,30 @@ form input {
     height: 68px;
     border: none;
     border-radius: 5px;
+    font-size: 28px;
+    padding-left: 5px;
+}
+
+#message {
+    width: 100%;
+    height: auto;
+    font-size: 28px;
 }
 
 #media-gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    column-gap: 80px; /* Spacing between media items */
+    column-gap: 40px; /* Spacing between media items */
     row-gap: 20px;
-    margin: 20px 100px;
+    margin: 30px 100px;
 }
 
 .media-item {
+    position: relative; /* Allows absolute children to be placed relative to this container */
+    display: block; 
     background-color: #fff;
+    border-radius: 10px;
     overflow: hidden;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-    /*text-align: center;*/
-
 }
 
 .media-item img,
@@ -140,7 +184,6 @@ form input {
     width: 60px;
     height: 60px;
     background-color: #cfcece;
-    /*background-image: url('../assets/icons/play.svg');*/  /* play button */
     background-size: cover;
     pointer-events: none;  /* Makes sure the icon doesn't interfere with the click event */
 }
@@ -213,3 +256,14 @@ form input {
 .next {
     right: 60px;
 }
+
+@keyframes modalopen {
+    from {
+      opacity: 0;
+      transform:  translateX(0%) translateY(0%);
+    }
+    to {
+      opacity: 1;
+      transform:  translateX(0%) translateY(10%);
+    }
+  }

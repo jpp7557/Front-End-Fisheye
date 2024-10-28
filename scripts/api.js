@@ -1,4 +1,3 @@
-// Fetch data from the JSON file
 export async function getJsonArrays(url) {
     try {
         const response = await fetch(url);

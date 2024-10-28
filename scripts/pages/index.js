@@ -25,10 +25,12 @@ function relookArticle() {
 }
 
 async function init() {
+    console.log("*** inside   init()");
     const dataFullPath ='data/photographers.json'
     // Récupère les datas des photographes
     const { photographers } = await getJsonArrays(dataFullPath);
     console.log("init => photographers :", photographers);
+    console.log("*** inside  init() ===> Calling    displayData(photographers)");
     displayData(photographers);
 }
 
