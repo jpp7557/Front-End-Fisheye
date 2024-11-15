@@ -1,3 +1,5 @@
+import { onlyFocussables } from '../api.js'; 
+
 export function initLightbox(works,name) {
 
     console.log("***** initLightbox ******")
@@ -9,9 +11,13 @@ export function initLightbox(works,name) {
     };
 
     const lightbox = document.getElementById('lightbox');
-    const closeBtn = document.querySelector('.close-lightbox');
+    const closeBtn = document.getElementById('close-btn');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
+
+    closeBtn.setAttribute('tabindex', '0');
+    prevBtn.setAttribute('tabindex', '0');
+    nextBtn.setAttribute('tabindex', '0');
 
     closeBtn.addEventListener('click', () => closeLightbox());
     prevBtn.addEventListener('click',  () => showPreviousMedia());
@@ -26,18 +32,20 @@ export function initLightbox(works,name) {
         }
     });
 
+    /*
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox || e.target.classList.contains('close-lightbox')) {
             console.log(e.target," clicked");
         }
     });
-
+    */
 
     function openLightbox(index) {
         console.log("called openLightbox index :",index);
         state.currentIndex = index;
+        console.log("currentItem , index : " ,index, state.mediaData[index]);
         const currentItem = state.mediaData[index];
-        const lightbox = document.getElementById('lightbox');
+        //const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxVideo = document.getElementById('lightbox-video');
         const lightboxVideoSource = document.getElementById('lightbox-video-source');
@@ -49,17 +57,34 @@ export function initLightbox(works,name) {
         if (currentItem.image) {
             lightboxImg.src = `assets/Sample_Photos/${state.firstName}/${currentItem.image}`;
             lightboxImg.style.display = 'block';  // Show image
+            lightboxImg.setAttribute('tabindex', '0');
+            lightboxImg.setAttribute('alt', `image ${currentItem.title}`);
+
         } else if (currentItem.video) {
+            lightboxVideo.setAttribute('arial-label', `${currentItem.title}`);
+            lightboxVideo.setAttribute('tabindex', '0');
             lightboxVideoSource.src = `assets/Sample_Photos/${state.firstName}/${currentItem.video}`;
             lightboxVideo.load();  // Load video to reset playback
             lightboxVideo.style.display = 'block';  // Show video
+            lightboxVideo.controls = true;
         }
 
         lightbox.style.display = 'block';  // Show lightbox
+
+        let lesFocussables = [];
+        lesFocussables = document.querySelectorAll('.lightbox-btn, #lightbox-img[tabindex="0"], #lightbox-video[tabindex="0"]');
+        console.log("openLightBox lesFocussables :",lesFocussables);
+        if (lesFocussables.length === 0) {
+            console.log('No element found ... ');
+        } else {
+            onlyFocussables(lesFocussables);
+        }
+        lesFocussables[1].focus();
+
     }
 
     function closeLightbox() {
-        const lightbox = document.getElementById('lightbox');
+        //const lightbox = document.getElementById('lightbox');
         lightbox.style.display = 'none';  // Hide lightbox
     }
 

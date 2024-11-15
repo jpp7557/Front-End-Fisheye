@@ -10,7 +10,7 @@
   <body>
     <header>
       <a href="index.html">
-        <img src="assets/images/logo.png" class="logo" />
+        <img src="assets/images/logo.png" class="logo" tabindex="0" alt="Back to photographers main page - link"/>
       </a>
     </header>
     <main id="main">
@@ -21,15 +21,16 @@
           <div class="bground"></div>
       <!-- Lightbox HTML structure (hidden initially) -->
       <section id="lightbox" class="lightbox" style="display:none;">
-        <img class="close-lightbox" src="assets/icons/close20.svg" />
+        <!--<img class="close-lightbox" src="assets/icons/close20.svg" />-->
+        <button id="close-btn" class="lightbox-btn" aria-label="Fermer">&times</button>
         <div class="lightbox-content">
           <img id="lightbox-img" class="lightbox-img" src="" alt="">
           <video id="lightbox-video" class="lightbox-video" controls style="display:none;">
             <source id="lightbox-video-source" src="" type="video/mp4">
           </video>
         </div>
-        <button id="prev-btn" class="prev">&lsaquo;</button>
-        <button id="next-btn" class="next">&rsaquo;</button>
+        <button id="prev-btn" class="lightbox-btn" aria-label="previous">&lsaquo;</button>
+        <button id="next-btn" class="lightbox-btn" aria-label="next">&rsaquo;</button>
       </section>
     </main>
     <div id="contact_modal">
