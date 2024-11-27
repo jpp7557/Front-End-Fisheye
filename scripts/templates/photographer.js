@@ -15,39 +15,29 @@ function photographerTemplate(photographer) {
          article.setAttribute('role', 'region'); // Each photographer card is a region for better navigation
          //article.setAttribute('aria-label', `${photographer.name}'s profile`);
 
-         // Create the container circleDiv for img
-        const circleDiv = document.createElement('div');
-        circleDiv.classList.add('circle');  // add class "circle" to circleDiv
-        article.appendChild(circleDiv);     // Append the circle to the selected article
-
         // Create the image element
         const img = document.createElement('img');
+        img.classList.add('circle'); 
         img.setAttribute('src', `assets/photographers/${photographer.portrait}`);
         img.setAttribute('alt', `${photographer.name}`);
 
-        // Append the image to the circular container
-        circleDiv.appendChild(img);
-
-        // Append the circular container to the ancre container
-        ancre.appendChild(circleDiv);
-
+        ancre.appendChild(img);
         // set anchor (link to photographer html page)
         ancre.setAttribute('href', `photographer.html?id=${photographer.id}`);
-        ancre.setAttribute('aria-label', `Visiter la page de ${photographer.name}`); // Clear, meaningful description
+        ancre.setAttribute('aria-label', `Lien,  la page de ${photographer.name}`); // Clear, meaningful description
         ancre.setAttribute('tabindex', '0');     // make focusable
-    // Set the h2 element with photographer's name then append it to the anchor
-        h2.textContent = photographer.name;
-        ancre.appendChild(h2);  // Append the <h2> to the anchor
 
-        // Set other content for other elements: city, tagline, price
+        // Set contents for photographer: name, city, tagline, price
+        h2.textContent = photographer.name;
         city.setAttribute('class', 'city');
         city.textContent = `${photographer.city}, ${photographer.country}`;
         tagline.textContent = photographer.tagline;
         price.setAttribute('class', 'prix');
-        price.textContent = `${photographer.price}€ par jour`;
+        price.textContent = `${photographer.price}€/jour`;
 
         // Append elements to article
-        article.appendChild(ancre);  // Append the anchor with the img and h2 inside
+        article.appendChild(ancre);  // Append the anchor with the img inside
+        article.appendChild(h2);
         article.appendChild(city);
         article.appendChild(tagline);
         article.appendChild(price);
@@ -63,7 +53,6 @@ function WorksTemplate() {
 
         // Create Header Dom
         const $photographeHeader = document.querySelector(".photographe-header");    
-        console.log(" in WorksTemplate, photographeHeader: ",  $photographeHeader);
         const $elemBio = document.createElement('section');
         $elemBio.id = "ph-bio-data";
 
@@ -82,7 +71,7 @@ function WorksTemplate() {
         $divImg.style.display = 'flex';            // Set display to flex
         $divImg.style.justifyContent = 'center';   // Center the items vertically
     
-        const nameElement = document.createElement('h2');
+        const nameElement = document.createElement('h1');
         const cityElement = document.createElement('p');
         cityElement.id = "city";
         const taglineElement = document.createElement('p');
@@ -100,7 +89,6 @@ function WorksTemplate() {
         const $worksPage = document.createElement('section')
         $worksPage.setAttribute('id', 'media-gallery');
 
-        console.log("$photographeHeader :", $photographeHeader);
         return $photographeHeader;        
     }
     return {createPageDom}
@@ -151,7 +139,6 @@ function mediaFactory(work, f_name) {
 
 // Main function to create the media template
 function createMediaTemplate(work, f_name) {
-    console.log("************  createMediaTemplate : f_name ", f_name);
 
     // creating <div class="media-item">
     const mediaItem = document.createElement('article');
@@ -168,24 +155,34 @@ function createMediaTemplate(work, f_name) {
         let media; 
         try {
             media = mediaFactory(work, f_name);
-            console.log("Media element created:", media);
         } catch (error) {
             console.error("Error creating media element:", error.message);
             return; // Exit the function if an error occurs to avoid further issues
         }
         
-        console.log("media type is :", media.tagName);
-
         if (media.tagName === 'VIDEO') {     // media must be accessible here outside the try block
             mediaItem.appendChild(playIcon); // Append the play icon to video media
         }
 
+        const mediaDescript = document.createElement('div');
+        mediaDescript.setAttribute('id', 'media-descript');
         const title = document.createElement('p');
         title.textContent = work.title;
+        const nbLike = document.createElement('p');
+        nbLike.classList.add('nb-like');
+        nbLike.textContent = work.likes;
+        const imgHeart = document.createElement('i');
+        imgHeart.classList.add('like','fas', 'fa-heart', 'heart-icon2');
+
 
         mediaItemAnchor.appendChild(media);  // Append <img> or <video> to the anchor
         mediaItem.appendChild(mediaItemAnchor);
-        mediaItem.appendChild(title);
+        
+        mediaDescript.appendChild(title);
+        mediaDescript.appendChild(nbLike);
+        mediaDescript.appendChild(imgHeart);
+
+        mediaItem.appendChild(mediaDescript);
         
 
         return {mediaItemAnchor, mediaItem} ;

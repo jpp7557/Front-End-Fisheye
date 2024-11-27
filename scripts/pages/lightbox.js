@@ -1,13 +1,13 @@
 import { onlyFocussables } from '../api.js'; 
 
-export function initLightbox(works,name) {
+export function initLightbox(works,fname) {
 
     console.log("***** initLightbox ******")
 
     const state = {
         currentIndex: 0,
         mediaData: works,
-        firstName: name.split(' ')[0]
+        //firstName: name.split(' ')[0]
     };
 
     const lightbox = document.getElementById('lightbox');
@@ -32,18 +32,9 @@ export function initLightbox(works,name) {
         }
     });
 
-    /*
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target.classList.contains('close-lightbox')) {
-            console.log(e.target," clicked");
-        }
-    });
-    */
-
     function openLightbox(index) {
-        console.log("called openLightbox index :",index);
         state.currentIndex = index;
-        console.log("currentItem , index : " ,index, state.mediaData[index]);
+        console.log("openLightbox with currentItem , index : " ,index, state.mediaData[index]);
         const currentItem = state.mediaData[index];
         //const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -55,7 +46,7 @@ export function initLightbox(works,name) {
         lightboxVideo.style.display = 'none';
 
         if (currentItem.image) {
-            lightboxImg.src = `assets/Sample_Photos/${state.firstName}/${currentItem.image}`;
+            lightboxImg.src = `assets/Sample_Photos/${fname}/${currentItem.image}`;
             lightboxImg.style.display = 'block';  // Show image
             lightboxImg.setAttribute('tabindex', '0');
             lightboxImg.setAttribute('alt', `image ${currentItem.title}`);
@@ -63,7 +54,7 @@ export function initLightbox(works,name) {
         } else if (currentItem.video) {
             lightboxVideo.setAttribute('arial-label', `${currentItem.title}`);
             lightboxVideo.setAttribute('tabindex', '0');
-            lightboxVideoSource.src = `assets/Sample_Photos/${state.firstName}/${currentItem.video}`;
+            lightboxVideoSource.src = `assets/Sample_Photos/${fname}/${currentItem.video}`;
             lightboxVideo.load();  // Load video to reset playback
             lightboxVideo.style.display = 'block';  // Show video
             lightboxVideo.controls = true;
@@ -73,7 +64,6 @@ export function initLightbox(works,name) {
 
         let lesFocussables = [];
         lesFocussables = document.querySelectorAll('.lightbox-btn, #lightbox-img[tabindex="0"], #lightbox-video[tabindex="0"]');
-        console.log("openLightBox lesFocussables :",lesFocussables);
         if (lesFocussables.length === 0) {
             console.log('No element found ... ');
         } else {
@@ -89,19 +79,15 @@ export function initLightbox(works,name) {
     }
 
     function showPreviousMedia() {
-        console.log("in showPreviousMedia mediaData.length: ", state.mediaData.length);
 
         let index = (state.currentIndex - 1 + state.mediaData.length) % state.mediaData.length;
-        console.log("in showPreviousMedia after calcul calling openLightbox(", state.currentIndex,")");
         state.currentIndex = index;
         openLightbox(index);
     }
 
     function showNextMedia() {
-        console.log("in showNextMedia mediaData.length: ", state.mediaData.length);
         let index = (state.currentIndex + 1 + state.mediaData.length) % (state.mediaData.length);
         state.currentIndex = index;
-        console.log("in showNextMedia after calcul calling openLightbox(", state.currentIndex,")");
         openLightbox(index);
     }
 

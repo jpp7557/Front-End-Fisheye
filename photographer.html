@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link href="https://fonts.googleapis.com/css?family=DM+Sans&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
     <title>Fisheye - photographe </title>
   </head>
   <body>
@@ -14,53 +15,72 @@
       </a>
     </header>
     <main id="main">
-          <section class="photographe-header" >
-            <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
+      <div id="total-like">
+        <p>likes</p>
+        <i class="fas fa-heart heart-icon1"></i>
+        <p>/jour</p>
+      </div>
+      <section class="photographe-header" >
+            <button id="open-modal-btn" class="contact_button" type="button" aria-haspopup="dialog" tabindex="0" onclick="displayModal()">Contact-moi</button>
           </section>
+          <div id="sort-option">
+            <label id="label-dropdown" for="custom-dropdown">Trier par</label>
+              <ul id="custom-dropdown" class="custom-dropdown" role="listbox" tabindex="0">
+                      <li role="option" data-sort="likes" tabindex="-1" value="0" aria-selected="true">Popularité</li>
+                      <div class="line"></div>
+                      <li role="option" data-sort="title" tabindex="-1" value="1" aria-selected="false">Titre</li>
+                      <div class="line"></div>
+                      <li role="option" data-sort="date" tabindex="-1" value="2" aria-selected="false" >Date</li>
+              </ul>
+          </div>
           <section class="media-gallery" id="media-gallery"></section>
           <div class="bground"></div>
-      <!-- Lightbox HTML structure (hidden initially) -->
+          <!-- Lightbox HTML structure (hidden initially) -->
       <section id="lightbox" class="lightbox" style="display:none;">
-        <!--<img class="close-lightbox" src="assets/icons/close20.svg" />-->
         <button id="close-btn" class="lightbox-btn" aria-label="Fermer">&times</button>
         <div class="lightbox-content">
           <img id="lightbox-img" class="lightbox-img">
           <video id="lightbox-video" class="lightbox-video" controls style="display:none;">
-            <source id="lightbox-video-source" type="video/mp4">
+              <source id="lightbox-video-source" type="video/mp4">
           </video>
         </div>
         <button id="prev-btn" class="lightbox-btn" aria-label="previous">&lsaquo;</button>
         <button id="next-btn" class="lightbox-btn" aria-label="next">&rsaquo;</button>
       </section>
     </main>
-    <div id="contact_modal">
-			<div class="modal">
-				<header>
-          <h2>Contactez-moi</h2>
-          <img src="assets/icons/close.svg" onclick="closeModal()" />
+      <div class="modal-overlay" id="modal-overlay" aria-hidden="true"></div>
+        <div class="modal" id="contact_modal" role="dialog" aria-labelledby="contact-modal-title" aria-hidden="true">
+        <header>
+          <h1>Contactez-moi</h1>
+          <button id="close-modal-btn">
+          <img src="assets/icons/close.svg"  onclick="closeModal()" />
+          </button>
         </header>
-        <p id="contact-name"></p>
-				<form>
-					<div>
-						<!--
-            <label>Prénom</label>
-						<input />
-            -->
-              <label>Prénom</label><br>
-              <input class="text-control" type="text" id="first" name="first" /><br>
-            <!--nom-->
-              <label>Nom</label><br>
-              <input class="text-control" type="text" id="last" name="last" require /><br>
-            <!--email-->
-              <label>E-mail</label><br>
-              <input class="text-control" type="email" id="email" name="email" required /><br>
-            <!-- Message -->  
-              <label>Votre Message</label><br>
-              <textarea id="message" name="message" rows="5" cols="40"></textarea>
-            </div>
-          <button class="contact_button">Envoyer</button>
-				</form>
-			</div>
+        <h1 id="contact-name"></h1>
+
+        <!--------------------------------------------------------------------->
+        <!-- Contact Form Modal -->
+          <form id="contact-form">
+            <label for="first-name">Prénom</label>
+            <input type="text" id="first-name" name="first-name" aria-required="true"><br>
+            <span id="first-name-error" class="error"></span>
+
+            <label for="name">Nom</label>
+            <input type="text" id="name" name="name" aria-required="true"><br>
+            <span id="name-error" class="error"></span>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" aria-required="true"><br>
+            <span id="email-error" class="error"></span>
+
+            <label for="message">Votre Message</label>
+            <textarea id="message" name="message" rows="5" cols="40" aria-required="true"></textarea><br>
+            <span id="message-error" class="error"></span>
+
+            <button type="submit">Envoyer</button>
+          </form>
+        </div>
+      </div>
 		</div>
     <script type="module" src="scripts/api.js"></script>
     <script src="scripts/templates/photographer.js"></script>
