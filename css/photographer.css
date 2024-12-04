@@ -1,11 +1,21 @@
 :root {
+    --max-width: 1600px; /* Define the max-width of the page */
+    --over-max-width: calc((100vw - 1600px)/2); /* extra length to add */
     --font-default: "DM Sans", Arial, Helvetica, sans-serif;
     --font-slab: var(--font-default);
     --modal-duration: 1s;
     --modal-left: 20%;
     --lateral-margin: 30px;
     --dropdown-height: 60px;
+    --dropdown-list-top:  390px;
+    --dropdown-list-left: 200px;
+    --contact-bg-color: #901c1c;
 }
+
+body {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
 
 * {
     box-sizing: border-box;
@@ -40,7 +50,7 @@
 
 #city {
     font-size: 1.5rem;
-    color: #db8876;
+    color: var(--contact-bg-color);
     margin : 5px 0;
 }
 
@@ -62,7 +72,7 @@
     width: calc(6 * var(--lateral-margin));
     height: 70px;
     border: none;
-    background-color: #901C1C;
+    background-color: var(--contact-bg-color);
     border-radius: 5px;
     cursor: pointer;
 }
@@ -86,7 +96,8 @@
 .modal {
     border-radius: 5px;
     background-color: #DB8876;
-    width: 50%;
+    width: 50%;    
+    height: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,11 +105,12 @@
     padding: 20px 30px 50px 35px;
     margin: auto;
     animation: modalopen var(--modal-duration) forwards;
-    position:relative;
-    z-index: 200;
+    z-index: 120;
     position: fixed;
     top: 0;    /* Start at the bottom */
     left: 25%;
+    overflow-y : auto; /* Enable scrolling inside modal if content overflows */
+
 }
 
 
@@ -165,7 +177,7 @@ form input, form textarea {
 }
 
 form button[type="submit"] {
-    background-color: #901C1C;
+    background-color: var(--contact-bg-color);
     color: white;
     padding: 1.5rem 2rem;
     border: none;
@@ -177,7 +189,7 @@ form button[type="submit"] {
 
 .error {
     color: red;
-    font-size: 0.9em;
+    font-size: 1em;
   }
 
 #media-gallery {
@@ -225,22 +237,26 @@ form button[type="submit"] {
 
 #media-descript {
     display: grid;
-    grid-template-columns: 5fr 0.6fr 0.8fr; /* 3 columns */
+    grid-template-columns: 5fr 0.6fr 0.6fr; /* 3 columns */
     column-gap: 1px;
 }
 
-.heart-icon1 {
-    background: #333;
+.nb-like {
+    text-align: right;
+}
+
+.heart-icon1 {  /* for total likes */
+    background: #131313;
     padding : 0;
     padding-top: 2px;
     margin :  0;
 }
 
-.heart-icon2 {
-    background: #901C1C;
+.heart-icon2 {  /* for each work's likes */
+    background: var(--contact-bg-color);
     font-size: 1.2em;
     margin: 8px 4px;
-
+    cursor: pointer;
 }
 
 .heart-icon1, .heart-icon2  {
@@ -249,7 +265,6 @@ form button[type="submit"] {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px transparent; /* Outline color */
-    cursor: pointer;
     text-align: center;
 
   }
@@ -276,7 +291,7 @@ form button[type="submit"] {
     width: 100%;
     height: 100%;
     background-color: white;
-    z-index: 1000;
+    z-index: 150;
     padding: 0px;
     margin: 0;
     overflow: scroll;
@@ -289,15 +304,35 @@ form button[type="submit"] {
 }
 
 /* Lightbox content (image/video) */
-.lightbox-content img, .lightbox-content video {
+#lightbox-img-content, #lightbox-video-content {
+    width: fit-content; /* set the box width according to the image size */
+    display: flex;
+    flex-direction: column ;
+    align-items: flex-start;
+    margin: 8vh auto;   /* Center the image */
+
+}
+
+#lightbox-img-content img, #lightbox-video-content video {
     max-width: 90vw;  
-    max-height: 90vh; 
+    max-height: 85vh; 
     width: auto;      /* Maintain aspect ratio */
     height: auto;     /* Maintain aspect ratio */
     display: block;   /* Block-level element */
-    margin: 8vh auto; /* Center the image horizontally */
+    margin-bottom: 20px;
     transition: transform 0.3s ease-in-out;
+}
+#lightbox-img-content img {
     cursor: zoom-in;
+}
+
+#lightbox-img-title, #lightbox-video-title {
+    color:#aa0d02;
+    font-size: 16px;
+    margin: 0;      
+    text-align: left;    /* Ensure text aligns to the left */
+    width: 100%;         /* Aligns with the image/video width */
+    padding-top: 5px;
 }
 
 .magnified {
@@ -311,11 +346,10 @@ form button[type="submit"] {
     top: 50%;
     background-color: transparent;
     border: white;
-    color: rgb(26, 26, 26);
-    font-size: 3em;
+    color: var(--contact-bg-color);
+    font-size: 6em;
     cursor: pointer;
     user-select: none;
-    opacity: 0.6;
 }
 
 /* lightbox close button */
@@ -325,10 +359,10 @@ form button[type="submit"] {
     right: 20px;
     background-color: transparent;
     font-size: 4em;
-    color: #db8876;
+    color: var(--contact-bg-color);
     border: #fff;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 101;
 }
 
 #prev-btn {
@@ -374,39 +408,61 @@ button:focus, input:focus, textarea:focus {
 
 }
 
-.line {
-  border-top: 3px solid white;
-  width: 135px; /* Length of the line */
-  margin: 10px 0px 10px -5px; /* Center the line */
-}
-
 #custom-dropdown {
     position: absolute;
-    top: 380px; 
-    left: 200px;
+    top: var(--dropdown-list-top); 
+    left: var(--dropdown-list-left);
     width: 170px;
     font-size: 20px;
     font-weight: bold;
     height: auto;
     color: white;
     border-radius: 5px;
-    padding: calc(var(--lateral-margin)/2);
+    padding: 0 calc(var(--lateral-margin)/2);
     cursor: pointer;
-    background-color: #901C1C;
-    z-index: 150; 
+    background-color: var(--contact-bg-color);
+    z-index: 110;
 }
 
 #custom-dropdown li {
-    height: 40px;
-    align-items: center;
-    padding-top: 8px;
-
+    list-style-type: none; /* Removing the dots before <li> */
+    height: 55px;
+    padding: 12px 0 0px 4px;
+    border-bottom: 1px solid white;  /* border-bottom for li */
+    margin: 5px 0; 
 }    
 
-#custom-dropdown li[role="option"]:hover,
-#custom-dropdown li[role="option"]:focus {
-background-color: #fa4f4fa9;
+#custom-dropdown li:last-of-type { /* no border-bottom for the last li */
+      border-bottom: none;
+}    
+
+#custom-dropdown.close li {  /* when the list is closed, no border-bottom for the selected li */
+    border-bottom: none;
+}
+
+#custom-dropdown li[role="option"]:hover {
+background-color: #db8876;
 outline: none;
+}
+
+#custom-dropdown li[role="option"]:focus {
+    background-color: #ebeb;
+    outline: none;
+}
+
+.arrow-up {
+    position: absolute;
+    top: calc(var(--dropdown-list-top) + 35px);
+    left:calc(var(--dropdown-list-left) + 130px);
+    width: 20px;
+    height: 30px;
+    stroke-width: 3; /* Makes the stroke bolder */
+    z-index: 111;
+
+}
+
+.arrow-up svg {
+    color : white;
 }
 
 ul:focus {
@@ -422,7 +478,7 @@ ul:focus {
     grid-template-columns: 0.8fr 0.4fr 1fr;
     position: fixed;
     bottom: 30px;
-    right: 20px ;
+    right: 3vw;
     width: 230px;
     height: 50px;
     text-align: right;
@@ -433,6 +489,18 @@ ul:focus {
     z-index: 100;
 }
 
+
+@media (min-width: 1600px) {
+    #custom-dropdown {
+       left : calc(var(--dropdown-list-left) + var(--over-max-width));
+    }
+    .arrow-up {
+        left: calc(var(--dropdown-list-left) + 130px + var(--over-max-width));  
+    }
+    #total-like  {
+        right: calc( 0.03*var(--max-width) + ( (100vw - 1600px)/2)); /* var(--over-max-width) = (100vw - 1600px)/2) */
+    }
+}
 #total-like p {
     margin : 0;
     padding: 0;

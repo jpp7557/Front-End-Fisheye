@@ -9,12 +9,12 @@
     <title>Fisheye - photographe </title>
   </head>
   <body>
+    <main id="main">
     <header>
       <a href="index.html">
         <img src="assets/images/logo.png" class="logo" tabindex="0" alt="Back to photographers main page - link"/>
       </a>
     </header>
-    <main id="main">
       <div id="total-like">
         <p>likes</p>
         <i class="fas fa-heart heart-icon1"></i>
@@ -24,13 +24,16 @@
             <button id="open-modal-btn" class="contact_button" type="button" aria-haspopup="dialog" tabindex="0" onclick="displayModal()">Contact-moi</button>
           </section>
           <div id="sort-option">
+            <span class="arrow-up">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 30" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 10 6-10"></path>
+              </svg>
+            </span>
             <label id="label-dropdown" for="custom-dropdown">Trier par</label>
               <ul id="custom-dropdown" class="custom-dropdown" role="listbox" tabindex="0">
-                      <li role="option" data-sort="likes" tabindex="-1" value="0" aria-selected="true">Popularité</li>
-                      <div class="line"></div>
-                      <li role="option" data-sort="title" tabindex="-1" value="1" aria-selected="false">Titre</li>
-                      <div class="line"></div>
-                      <li role="option" data-sort="date" tabindex="-1" value="2" aria-selected="false" >Date</li>
+                      <li class="critere" role="option" data-sort="likes" tabindex="-1" value="0" aria-selected="true">Popularité</li>
+                      <li class="critere" role="option" data-sort="title" tabindex="-1" value="1" aria-selected="false">Titre</li>
+                      <li class="critere" role="option" data-sort="date" tabindex="-1" value="2" aria-selected="false" >Date</li>
               </ul>
           </div>
           <section class="media-gallery" id="media-gallery"></section>
@@ -39,10 +42,16 @@
       <section id="lightbox" class="lightbox" style="display:none;">
         <button id="close-btn" class="lightbox-btn" aria-label="Fermer">&times</button>
         <div class="lightbox-content">
-          <img id="lightbox-img" class="lightbox-img">
-          <video id="lightbox-video" class="lightbox-video" controls style="display:none;">
-              <source id="lightbox-video-source" type="video/mp4">
-          </video>
+            <div id="lightbox-img-content">
+              <img id="lightbox-img" class="lightbox-img">
+              <p id="lightbox-img-title"></p>
+            </div>
+            <div id="lightbox-video-content">
+              <video id="lightbox-video" class="lightbox-video" controls">
+                  <source id="lightbox-video-source" type="video/mp4">
+              </video>
+              <p id="lightbox-video-title"></p>
+            </div>
         </div>
         <button id="prev-btn" class="lightbox-btn" aria-label="previous">&lsaquo;</button>
         <button id="next-btn" class="lightbox-btn" aria-label="next">&rsaquo;</button>
@@ -82,10 +91,9 @@
         </div>
       </div>
 		</div>
-    <script type="module" src="scripts/api.js"></script>
-    <script src="scripts/templates/photographer.js"></script>
-    <script type="module" src="scripts/pages/lightbox.js"></script>
-    <script type="module" src="scripts/pages/photographer.js"></script>
-    <script src="scripts/utils/contactForm.js"></script>
+    <script src="./scripts/api.js"></script>
+    <script src="./scripts/templates/photographer.js"></script>
+    <script src="./scripts/pages/photographer.js"></script>
+    <script src="./scripts/utils/contactForm.js"></script>
   </body>
 </html>

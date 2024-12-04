@@ -1,3 +1,65 @@
+// Main function to create the media template
+function createMediaTemplate(work, f_name) {
+
+    // creating <div class="media-item">
+    const mediaItem = document.createElement('article');
+    mediaItem.classList.add('media-item');  // Add a class to the div
+
+    mediaItem.setAttribute("data-likes", work.likes);
+
+    const playIcon = setDomToPlayIcon('assets/icons/play.svg', '35px', '35px', '0'); // Play icon
+
+    // Factory Method that creates and returns the media element (img or video)
+    function createMediaDom() {
+        const mediaItemAnchor = document.createElement('button');
+        mediaItemAnchor.setAttribute('tabindex', '0');
+        mediaItemAnchor.setAttribute('class', 'media-button');
+
+
+        let media; 
+        try {
+            media = mediaFactory(work, f_name);
+        } catch (error) {
+            console.error("Error creating media element:", error.message);
+            return; // Exit the function if an error occurs to avoid further issues
+        }
+        
+        if (media.tagName === 'VIDEO') {     // media must be accessible here outside the try block
+            mediaItem.appendChild(playIcon); // Append the play icon to video media
+        }
+
+        const mediaDescript = document.createElement('div');
+        mediaDescript.setAttribute('id', 'media-descript');
+        const title = document.createElement('p');
+        title.textContent = work.title;
+        const nbLike = document.createElement('p');
+        nbLike.classList.add('nb-like');
+        nbLike.textContent = work.likes;
+        const imgHeart = document.createElement('i');
+        if (!imgHeart.classList.contains('clicked')) { // prevent incrementing action
+            imgHeart.classList.add('like','fas', 'fa-heart', 'heart-icon2');
+        } else {
+            imgHeart.classList.add('like','fas', 'fa-heart', 'heart-icon2', 'clicked');
+        }
+
+
+
+        mediaItemAnchor.appendChild(media);  // Append <img> or <video> to the anchor
+        mediaItem.appendChild(mediaItemAnchor);
+        
+        mediaDescript.appendChild(title);
+        mediaDescript.appendChild(nbLike);
+        mediaDescript.appendChild(imgHeart);
+
+        mediaItem.appendChild(mediaDescript);
+        
+
+        return {mediaItemAnchor, mediaItem} ;
+    }
+
+    return { createMediaDom };
+}
+
 function photographerTemplate(photographer) {
     const { name, portrait } = photographer;
     const picture = `assets/photographers/${portrait}`;
@@ -135,60 +197,6 @@ function mediaFactory(work, f_name) {
         throw new Error("Invalid media type: must be either an image or a video");
     }
     return media;
-}
-
-// Main function to create the media template
-function createMediaTemplate(work, f_name) {
-
-    // creating <div class="media-item">
-    const mediaItem = document.createElement('article');
-    mediaItem.classList.add('media-item');  // Add a class to the div
-    const playIcon = setDomToPlayIcon('assets/icons/play.svg', '35px', '35px', '0'); // Play icon
-
-    // Factory Method that creates and returns the media element (img or video)
-    function createMediaDom() {
-        const mediaItemAnchor = document.createElement('button');
-        mediaItemAnchor.setAttribute('tabindex', '0');
-        mediaItemAnchor.setAttribute('class', 'media-button');
-
-
-        let media; 
-        try {
-            media = mediaFactory(work, f_name);
-        } catch (error) {
-            console.error("Error creating media element:", error.message);
-            return; // Exit the function if an error occurs to avoid further issues
-        }
-        
-        if (media.tagName === 'VIDEO') {     // media must be accessible here outside the try block
-            mediaItem.appendChild(playIcon); // Append the play icon to video media
-        }
-
-        const mediaDescript = document.createElement('div');
-        mediaDescript.setAttribute('id', 'media-descript');
-        const title = document.createElement('p');
-        title.textContent = work.title;
-        const nbLike = document.createElement('p');
-        nbLike.classList.add('nb-like');
-        nbLike.textContent = work.likes;
-        const imgHeart = document.createElement('i');
-        imgHeart.classList.add('like','fas', 'fa-heart', 'heart-icon2');
-
-
-        mediaItemAnchor.appendChild(media);  // Append <img> or <video> to the anchor
-        mediaItem.appendChild(mediaItemAnchor);
-        
-        mediaDescript.appendChild(title);
-        mediaDescript.appendChild(nbLike);
-        mediaDescript.appendChild(imgHeart);
-
-        mediaItem.appendChild(mediaDescript);
-        
-
-        return {mediaItemAnchor, mediaItem} ;
-    }
-
-    return { createMediaDom };
 }
 
 function setDomToPlayIcon(iconPath, iconw, iconh, zInd) {

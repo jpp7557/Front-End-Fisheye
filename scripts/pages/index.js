@@ -1,7 +1,4 @@
-import { getJsonArrays } from '../api.js';  // getJsonArrays() to Fetch items in the JSON file 
-import { onlyFocussables } from '../api.js';  // getJsonArrays() to Fetch items in the JSON file 
-
-async function displayData(photographers) {
+function displayData(photographers) {
     const photographersSection = document.querySelector(".photographer_section");
 
     photographers.forEach((photographer) => {
@@ -14,16 +11,18 @@ async function displayData(photographers) {
 }
 
 async function init() {
-    console.log("*** inside   init()");
-    const dataFullPath ='data/photographers.json'
-    // Récupère les datas des photographes
-    const { photographers } = await getJsonArrays(dataFullPath);
-    console.log("*** inside  init() ===> Calling    displayData(photographers)");
-    await displayData(photographers);
-    const lesFocussables = document.querySelectorAll('[tabindex="0"]');
-    onlyFocussables(lesFocussables);
-
+    try {   
+        console.log("*** inside   init()");
+        const dataFullPath ='./data/photographers.json'
+        // Récupère les datas des photographes
+        const { photographers } = await getJsonArrays(dataFullPath);
+        console.log("*** inside  init() ===> Calling    displayData(photographers)");
+        displayData(photographers);
+        const lesFocussables = document.querySelectorAll('[tabindex="0"]');
+        onlyFocussables(lesFocussables);
+    } catch (error) {
+        console.error("Error initializing the app:", error);
+    }
 }
 
 init();
-    

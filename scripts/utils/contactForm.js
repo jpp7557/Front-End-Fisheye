@@ -1,20 +1,5 @@
-/*
-function displayModal() {
-    const modal = document.getElementById("contact_modal");
-	modal.style.display = "block";    
-    const modalbg = document.querySelector(".bground");
-    modalbg.style.display = "block";     // open the dialog
-
-}
-
-function closeModal() {
-    const modal = document.getElementById("contact_modal");
-    modal.style.display = "none";
-    const modalbg = document.querySelector(".bground");
-    modalbg.style.display = "none";     // Close the dialog
-}
-*/
     const modal = document.getElementById('contact_modal');
+    const pageContent = document.getElementById('main');
     const modalOverlay = document.getElementById('modal-overlay');
     const displayModalBtn = document.getElementById('open-modal-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
@@ -107,6 +92,7 @@ function closeModal() {
   ///////////////////////////////////////////////////////////////////
       // Function to open the modal
       const displayModal = () => {
+          document.body.style.overflow = 'hidden'; // Disable scrolling on the page
           modal.style.display = 'block';
           modalOverlay.style.display = 'block';
           modal.setAttribute('aria-hidden', 'false');
@@ -120,6 +106,7 @@ function closeModal() {
   
       // Function to close the modal
       const closeModal = () => {
+          document.body.style.overflow = ''; // Re-enable scrolling
           modal.style.display = 'none';
           modalOverlay.style.display = 'none';
           modal.setAttribute('aria-hidden', 'true');

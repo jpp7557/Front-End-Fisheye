@@ -1,6 +1,35 @@
-import { getJsonArrays } from '../api.js';  // getJsonArrays() to Fetch items in the JSON file 
-import { onlyFocussables } from '../api.js'; 
-import { initLightbox } from '../pages/lightbox.js';
+const dataFullPath = './data/photographers.json';
+let photographers = [];
+let media = [];
+
+async function main() {
+  try {
+    let { photographers, media: fetchedMedia } = await fetchData(dataFullPath);
+
+    const photographerId = getPhotographerIdFromUrl();
+
+    // Find the photographer
+    const photographer = photographers.find(p => p.id == photographerId);
+    if (!photographer) {
+      throw new Error(`Photographer with ID ${photographerId} not found.`);
+    }
+
+    // Filter media by photographer ID
+    const works = fetchedMedia.filter(item => item.photographerId == photographerId);
+    media = works;  //// Ensures the global media array is updated
+    console.log("Global media after filtering:", media);
+
+    // Initialize other functionality
+    console.log("photographer is : ",photographer.name);
+    mediaInit(works, photographer);
+
+  } catch (error) {
+    console.error("Error in main function:", error);
+  }
+}
+
+// Call the main function
+main();
 
 // Retrieve the photographer id from the URL
 function getPhotographerIdFromUrl() {
@@ -9,28 +38,29 @@ function getPhotographerIdFromUrl() {
 }
 
 /************************************************************* */
-const dataFullPath ='data/photographers.json'
-const { photographers, media } = await getJsonArrays(dataFullPath);
-const photographerId = getPhotographerIdFromUrl();
-const photographer = photographers.find(p => p.id == photographerId);
-const firstName = photographer.name.split(' ')[0];
-const works = media.filter(item => item.photographerId == photographerId); // select media by Id
+async function fetchData(dataFullPath) {
+  try {
+      const { photographers, media } = await getJsonArrays(dataFullPath);
+      return { photographers, media }; // Return an object containing both
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error; // Re-throw the error for the caller to handle
+  }
+}
+
 const mediaGallery = document.getElementById('media-gallery');
 const dropdownUl = document.getElementById("custom-dropdown");
 const options = Array.from(dropdownUl.children); // Get all `li` elements inside the `ul`
-//const options = document.querySelectorAll("#custom-dropdown li"); // get options
+let workClicked = [];  // Array to mark clicked heart icon, if a work is in the array, a click will NOT increment like 
 
 // Track the current option du tri
 let currentIndex = options.findIndex(option => option.getAttribute("aria-selected") === "true");
-const resTri = [...works]; // Create a copy to avoid mutating the original array
 
 displayDropdownList(false);  // cacher la list de tri
-console.log("photographer.name:",photographer.name);
 console.log("currenIndex : ", currentIndex);
 
 function displayHeaderDom(auteur) {
 
-    //const photogrHeader = document.querySelector(".photographe-header");
     let divPortrait = document.getElementById('div-img');
     let imgPortrait = divPortrait.querySelector('img');
     imgPortrait.setAttribute('src', `assets/photographers/${auteur.portrait}`);
@@ -61,11 +91,10 @@ function displayHeaderDom(auteur) {
     
 }
 
-function createMediaPage(works) {
+function createMediaPage(works,name) {
 
-    //const firstName = name.split(' ')[0];
-    console.log("in createMediaPage  ", firstName);
- 
+    //const pherId = works[0].photographerId;
+    const firstName = name.split(' ')[0]; 
     //  get <div id='media-gallery'>
     //const mediaGallery = document.getElementById('media-gallery');
     mediaGallery.innerHTML = ''; // Clear the gallery from previous contents
@@ -77,45 +106,45 @@ function createMediaPage(works) {
 function displayEachWork(works, firstName) {
   
     const lightboxController = initLightbox(works, firstName);
-  /*
-    const nbLike = document.querySelectorAll('.nb-like');
-    const nbTotalLikes = document.getElementById('total-like');
-    const totalLike = 0;
-  */
+
     works.forEach((item, index) => {        
       const workModel = createMediaTemplate(item, firstName);
-      const { mediaItemAnchor, mediaItem } = workModel.createMediaDom(); // Call the method to get the media elements
+
+      if (!workModel || typeof workModel.createMediaDom !== 'function') {
+        console.error('workModel or createMediaDom is invalid:', workModel);
+        return;
+      }
+
+      const { mediaItemAnchor, mediaItem } = workModel.createMediaDom(); // Call the method to create the media elements
+      //console.log('mediaItemAnchor:', mediaItemAnchor, 'mediaItem:', mediaItem);
+
+      const heartIcon = mediaItem.querySelector('.heart-icon2');      
+
+      // Add event listener to toggle like on the heart icon
+      if (heartIcon) {
+        heartIcon.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent the click from triggering other handlers
+          //console.log("workClicked :" , workClicked);
+          const likeCount = heartIcon.previousElementSibling;
+          if (!workClicked.includes(item.id)) {  // check if the heart icon has already been clicked
+                item.likes += 1;  // Increment the like count
+                likeCount.textContent = parseInt(likeCount.textContent, 10) + 1;
+                workClicked.push(item.id); // adding the work's id in workClicked
+                incrementTotalLike();
+          }
+        });
+      }
 
       // Add event listener to open lightbox when clicked
       mediaItemAnchor.addEventListener('click', (e) => {
           e.preventDefault();  // Prevent anchor navigation
           lightboxController.openLightbox(index); // Open lightbox with selected item
       });
+
       // Append each media item to the gallery
       mediaGallery.appendChild(mediaItem);
-  //totalLike += nbLike.item.likes;
-    })
-  //nbTotalLikes.textContent= totalLike;
-
-      // set CLICK listener to each heart icon
-    const clLikes = document.querySelectorAll('.heart-icon2');
-    clLikes.forEach((heartIcon) => {
-        heartIcon.addEventListener('click', () => {
-          if (!heartIcon.classList.contains('clicked')) { // prevent incrementing action
-              // Find the sibling `span` for the like count
-              const likeCount = heartIcon.previousElementSibling;
-              console.log("likeCount : ",likeCount.textContent);
-                // Increment the like count
-                let currentLikes = parseInt(likeCount.textContent, 10);
-                likeCount.textContent = currentLikes + 1;
-                // mark heart-icon as clicked to prevent futher incrementation
-                heartIcon.classList.add('clicked');
-                incrementTotalLike();
-          }
-        })
     })
 }
-
 
 function setContactName(name) {
     const contactName = document.getElementById('contact-name');
@@ -126,10 +155,8 @@ function displayMedia(works,photog_name) {
 
     const mediaGallery = document.getElementById('media-gallery');
     mediaGallery.innerHTML = ''; // Clear the gallery
-    createMediaPage(works);
+    createMediaPage(works,photog_name);
 }
-
-
 
 function displayFullMediaPage(p_works, p_photographer) {
 
@@ -141,27 +168,43 @@ function displayFullMediaPage(p_works, p_photographer) {
     setContactName(p_photographer.name);
 } 
 
-async function mediaInit() {
+async function mediaInit(ph_works,photographer) {
     console.log("in mediaInit: ****** ");
-    const works = trierWorks("likes");
+    const works = trierWorks(ph_works,"likes");
     displayFullMediaPage(works, photographer);
     displayNbTotalLikes(works);
-    displayTarif();
+    displayTarif(photographer);
     //const contactName = document.getElementById('contact-name');
     console.log("fin mediaInit() ");
-
-
 } 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+const arrowPath = document.querySelector('.arrow-up svg path');
+const listCritere = document.querySelectorAll('#sort-option li');
+const arrowDownVal = 'M6 9l6 9 6-9';
+const arrowUpVal = 'M6 18l6-8 6 8';
+
 function isDropdownListOn() {
-  let isOn = options.some(option => option.getAttribute("aria-selected") === "false" && option.style.display === "block");
-  console.log ("is isDropdownList ON ? ", isOn);
-  return isOn;
+  let isClosed = dropdownUl.classList.contains('close');
+
+  console.log ("is isDropdownList ON ? ", !isClosed);
+  if (!isClosed) {  // if on
+    arrowPath.setAttribute('d', arrowDownVal);   //list will toggle to "closed" : arrow down
+  } else {
+     arrowPath.setAttribute('d', arrowUpVal); //list will toggle to "open" : arrow up
+  }
+
+  return !isClosed;
 }
+
 
 // Function to show or hide the dropdown options
 function displayDropdownList(show) {
+  if (show) {
+    dropdownUl.classList.remove('close');
+  } else {
+    dropdownUl.classList.add('close');
+  }
   options.forEach(option => {
     if (option.getAttribute("aria-selected") === "true") {
       option.style.display = "block"; // Keep the selected option always visible
@@ -173,7 +216,10 @@ function displayDropdownList(show) {
 
 // Function to toggle dropdown visibility
 function toggleDropdown() {
-  displayDropdownList(!isDropdownListOn());
+  let listIsOn = isDropdownListOn();
+  displayDropdownList(!listIsOn);
+  console.log (listIsOn? "On, will toggle close" : "closed, will toggle on");
+  console.log("arrowPath: ", arrowPath.getAttribute('d'));
 }
 
 
@@ -206,11 +252,13 @@ function selectOption(index) {
     const previousSelect = options.find(opt => opt.getAttribute("aria-selected") === "true");
     if (previousSelect) {
         previousSelect.setAttribute("aria-selected", "false");
+        previousSelect.classList.remove('selected');
     }
 
     // Select new option
     const selectedOption = options[index];
     selectedOption.setAttribute("aria-selected", "true");
+    selectedOption.classList.add('selected');
 
     // Close the dropdown
     toggleDropdown();
@@ -219,21 +267,126 @@ function selectOption(index) {
 
 //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-function trierWorks(criteria) {
+function trierWorks(resTri, criteria) {
+
+  sortedWorks = [...resTri];  //copy of resTri
 
   if (criteria === "title") {
-    resTri.sort((a, b) => a.title.localeCompare(b.title)); // alphabet descendant
+    sortedWorks.sort((a, b) => a.title.localeCompare(b.title)); // alphabet descendant
   } else if (criteria === "date") {
-    resTri.sort((a, b) => new Date(b.date) - new Date(a.date)); // le plus recent
+    sortedWorks.sort((a, b) => new Date(b.date) - new Date(a.date)); // le plus recent
   } else if (criteria === "likes") {
-    resTri.sort((a, b) => a.likes - b.likes); // les likes ascendants
+    sortedWorks.sort((a, b) => a.likes - b.likes); // les likes ascendants
   }
 
-  return resTri;
+  return sortedWorks;
 }
 
 //  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+function initLightbox(works,fname) {
+
+  console.log("***** initLightbox ******")
+
+  const state = {
+      currentIndex: 0,
+      mediaData: works,
+      //firstName: name.split(' ')[0]
+  };
+
+  const lightbox = document.getElementById('lightbox');
+  const closeBtn = document.getElementById('close-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+   
+
+  closeBtn.setAttribute('tabindex', '0');
+  prevBtn.setAttribute('tabindex', '0');
+  nextBtn.setAttribute('tabindex', '0');
+
+  closeBtn.addEventListener('click', () => closeLightbox());
+  prevBtn.addEventListener('click',  () => showPreviousMedia());
+  nextBtn.addEventListener('click',  () => showNextMedia());
+
+  const lightboxImg = document.querySelector('.lightbox-content img');
+  lightboxImg.addEventListener('click', () => {
+      if (lightboxImg.classList.contains('magnified')) {
+          lightboxImg.classList.remove('magnified');
+      } else {
+          lightboxImg.classList.add('magnified');
+      }
+  });
+
+  function openLightbox(index) {
+      state.currentIndex = index;
+      console.log("openLightbox with currentItem , index : " ,index, state.mediaData[index]);
+      const currentItem = state.mediaData[index];
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxVideo = document.getElementById('lightbox-video');
+      const lightboxVideoSource = document.getElementById('lightbox-video-source');
+      let mediaTitle = document.getElementById('lightbox-img-title');
+
+      const lightboxImgContent = document.getElementById('lightbox-img-content');
+      const lightboxVideoContent = document.getElementById('lightbox-video-content');
+
+
+      // Hide all media elements
+      //lightboxImg.style.display = 'none';
+      //lightboxVideo.style.display = 'none';
+      lightboxImgContent.style.display = 'none';
+      lightboxVideoContent.style.display = 'none';
+
+
+
+      if (currentItem.image) {
+          lightboxImgContent.style.display = 'flex';  // Show image
+          lightboxImg.src = `assets/Sample_Photos/${fname}/${currentItem.image}`;
+          lightboxImg.setAttribute('tabindex', '0');
+          lightboxImg.setAttribute('alt', `image ${currentItem.title}`);
+
+      } else if (currentItem.video) {
+          lightboxVideoContent.style.display = 'flex';  // Show video
+          lightboxVideo.setAttribute('arial-label', `${currentItem.title}`);
+          lightboxVideo.setAttribute('tabindex', '0');
+          lightboxVideoSource.src = `assets/Sample_Photos/${fname}/${currentItem.video}`;
+          lightboxVideo.load();  // Load video to reset playback
+          lightboxVideo.controls = true;
+          mediaTitle = document.getElementById('lightbox-video-title');
+      }
+      mediaTitle.textContent = currentItem.title;
+      lightbox.style.display = 'block';  // Show lightbox
+
+      let lesFocussables = [];
+      lesFocussables = document.querySelectorAll('.lightbox-btn, #lightbox-img[tabindex="0"], #lightbox-video[tabindex="0"]');
+      if (lesFocussables.length === 0) {
+          console.log('No element found ... ');
+      } else {
+          onlyFocussables(lesFocussables);
+      }
+      lesFocussables[1].focus();
+
+  }
+
+  function closeLightbox() {
+      //const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'none';  // Hide lightbox
+  }
+
+  function showPreviousMedia() {
+
+      let index = (state.currentIndex - 1 + state.mediaData.length) % state.mediaData.length;
+      state.currentIndex = index;
+      openLightbox(index);
+  }
+
+  function showNextMedia() {
+      let index = (state.currentIndex + 1 + state.mediaData.length) % (state.mediaData.length);
+      state.currentIndex = index;
+      openLightbox(index);
+  }
+
+  return {openLightbox,closeLightbox,showPreviousMedia,showNextMedia}
+}
 
 /****** Listeners  *******/
 ///////////////////////////////////////////////////
@@ -275,15 +428,25 @@ const effectuerTri = (event, index) => {
       return; // Do nothing
   }
 
-  event.stopPropagation();
+  const nameDom = document.querySelector('#ph-bio-data h1');
+  let name = nameDom.textContent;
+  console.log("nameDom.textContent : ", nameDom.textContent);
+  console.log("tri avec index : ", index);
+
+  const critere = [ "likes","title","date" ];
+  let newData = [...media];
+  console.log("effectuerTri  newData : ", newData);
+
+  event.stopPropagation();  
+
   if (isDropdownListOn() === false) {
       displayDropdownList(true);
   } else {
-      const critere = event.target.getAttribute("data-sort");
       selectOption(index);
-      const works = trierWorks(critere);
-      displayMedia(works, firstName);
-      displayNbTotalLikes(works);
+      let newSorted = trierWorks(newData, critere[index]);
+      console.log("effectuerTri  newSorted dans else avec critere : ",critere[index] ,newSorted);
+      displayMedia(newSorted, name);
+      displayNbTotalLikes(newSorted);
   }
 };
 // Attach click and Enter listeners to each option for dropdown list
@@ -297,7 +460,6 @@ const compterLikes = (works) => {
   let totalLikes = 0;
   works.forEach((work) => {
       totalLikes += parseInt(work.likes, 10);
-      console.log("totalLikes provisoir : ", work.title, work.likes);
   })
   console.log(compterLikes, totalLikes);
   return totalLikes;
@@ -312,7 +474,7 @@ function displayNbTotalLikes(works) {
     console.log( "nbTotalLikes : ", totalLikesElement.textContent);
 }
 
-function displayTarif() {
+function displayTarif(photographer) {
     const phgPrice = totalLikesDiv.children[2];
     phgPrice.textContent = photographer.price + "€ /jour";
     console.log( "Prix : ", phgPrice.textContent);
@@ -334,40 +496,8 @@ document.addEventListener("click", (event) => {
   if (!event.target.closest(".custom-dropdown")) {
     event.stopPropagation();
     displayDropdownList(false);
+    arrowPath.setAttribute('d',arrowDownVal);   //list will toggle to "closed" : arrow down
   }
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-
-mediaInit().then(() => {
-    const lesFocussables = document.querySelectorAll('img[tabindex="0"], .media-button[tabindex="0"] ');
-    if (lesFocussables.length === 0) {
-        console.log('No elements found !');
-    } else {
-        onlyFocussables(lesFocussables);
-    }
-    lesFocussables[0].focus();
-
-})
-
-/*
-const clLikes = document.querySelectorAll('.heart-icon2');
-clLikes.forEach((heartIcon) => {
-    heartIcon.addEventListener('click', () => {
-      if (!heartIcon.classList.contains('clicked')) {
-          // Find the sibling `span` for the like count
-          const likeCount = heartIcon.previousElementSibling;
-          console.log("likeCount : ",likeCount.textContent);
-            // Increment the like count
-            let currentLikes = parseInt(likeCount.textContent, 10);
-            likeCount.textContent = currentLikes + 1;
-
-            // Add a visual effect (optional)
-            heartIcon.classList.add('clicked');
-      }
-    })
-  })
-console.log("clLike CLICK listening: ");
-*/
-
-

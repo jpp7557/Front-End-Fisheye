@@ -1,4 +1,4 @@
-export async function getJsonArrays(url) {
+async function getJsonArrays(url) {
     try {
         const response = await fetch(url);
     if (!response.ok) {
@@ -13,12 +13,12 @@ export async function getJsonArrays(url) {
     }
 }
 
-export function onlyFocussables(lesFocussables) {
+function onlyFocussables(lesFocussables) {
     const firstFocusElement = lesFocussables[0];
     const lastFocusElement = lesFocussables[lesFocussables.length - 1];
-
+  
     document.addEventListener('keydown', (event) => {
-
+  
         if (event.key === 'Tab') {
             if (event.shiftKey) {
                 // If Shift + Tab is pressed and focus is on the first element, loop back to the last
@@ -35,5 +35,5 @@ export function onlyFocussables(lesFocussables) {
             }
         }
     });
-
 }
+  
