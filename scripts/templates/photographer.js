@@ -4,7 +4,7 @@ function createMediaTemplate(work, f_name) {
     // creating <div class="media-item">
     const mediaItem = document.createElement('article');
     mediaItem.classList.add('media-item');  // Add a class to the div
-
+    mediaItem.setAttribute('role', 'region');
     mediaItem.setAttribute("data-likes", work.likes);
 
     const playIcon = setDomToPlayIcon('assets/icons/play.svg', '35px', '35px', '0'); // Play icon
@@ -29,13 +29,18 @@ function createMediaTemplate(work, f_name) {
         }
 
         const mediaDescript = document.createElement('div');
-        mediaDescript.setAttribute('id', 'media-descript');
+        mediaDescript.classList.add('media-descript');
         const title = document.createElement('p');
         title.textContent = work.title;
+        //title.setAttribute('tabindex', '0');
         const nbLike = document.createElement('p');
         nbLike.classList.add('nb-like');
         nbLike.textContent = work.likes;
-        const imgHeart = document.createElement('i');
+        nbLike.setAttribute('aria-label', `nombre de like ${nbLike.textContent}`);
+        nbLike.setAttribute('tabindex', '0');
+        const imgHeart = document.createElement('span');
+        imgHeart.setAttribute('tabindex', '0');
+        imgHeart.setAttribute('aria-label', "j'aime");
         if (!imgHeart.classList.contains('clicked')) { // prevent incrementing action
             imgHeart.classList.add('like','fas', 'fa-heart', 'heart-icon2');
         } else {

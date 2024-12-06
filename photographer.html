@@ -9,7 +9,7 @@
     <title>Fisheye - photographe </title>
   </head>
   <body>
-    <main id="main">
+    <main>
     <header>
       <a href="index.html">
         <img src="assets/images/logo.png" class="logo" tabindex="0" alt="Back to photographers main page - link"/>
@@ -17,7 +17,7 @@
     </header>
       <div id="total-like">
         <p>likes</p>
-        <i class="fas fa-heart heart-icon1"></i>
+        <span class="fas fa-heart heart-icon1"></span>
         <p>/jour</p>
       </div>
       <section class="photographe-header" >
@@ -43,7 +43,7 @@
         <button id="close-btn" class="lightbox-btn" aria-label="Fermer">&times</button>
         <div class="lightbox-content">
             <div id="lightbox-img-content">
-              <img id="lightbox-img" class="lightbox-img">
+              <img id="lightbox-img" class="lightbox-img" alt="">
               <p id="lightbox-img-title"></p>
             </div>
             <div id="lightbox-video-content">
@@ -62,7 +62,7 @@
         <header>
           <h1>Contactez-moi</h1>
           <button id="close-modal-btn">
-          <img src="assets/icons/close.svg"  onclick="closeModal()" />
+          <img src="assets/icons/close.svg"  alt="close" onclick="closeModal()" />
           </button>
         </header>
         <h1 id="contact-name"></h1>

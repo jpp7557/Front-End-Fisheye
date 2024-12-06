@@ -235,7 +235,7 @@ form button[type="submit"] {
     font-weight: bold;
 }
 
-#media-descript {
+.media-descript {
     display: grid;
     grid-template-columns: 5fr 0.6fr 0.6fr; /* 3 columns */
     column-gap: 1px;

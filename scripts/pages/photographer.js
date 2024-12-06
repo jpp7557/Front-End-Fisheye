@@ -103,6 +103,27 @@ function createMediaPage(works,name) {
 
 }
 
+
+const incrementLikes = (event,item) => {
+  event.stopPropagation();  
+
+  if (event.type === "keydown" && event.key !== "Enter") {
+      return; // Do nothing
+  }
+  if (event.target.classList.contains('heart-icon2')) {
+      // Get the likeCount element
+      const  likeCount = event.target.previousElementSibling;
+
+      if (!workClicked.includes(item.id)) {  // check if the heart icon has already been clicked
+        item.likes += 1;  // Increment the like count
+        likeCount.textContent = parseInt(likeCount.textContent, 10) + 1;
+        likeCount.setAttribute('aria-label', `nombre de like ${likeCount.textContent}`); //update aria-label
+        workClicked.push(item.id); // adding the work's id in workClicked
+        incrementTotalLike();
+      }
+  }
+}   
+
 function displayEachWork(works, firstName) {
   
     const lightboxController = initLightbox(works, firstName);
@@ -120,20 +141,9 @@ function displayEachWork(works, firstName) {
 
       const heartIcon = mediaItem.querySelector('.heart-icon2');      
 
-      // Add event listener to toggle like on the heart icon
-      if (heartIcon) {
-        heartIcon.addEventListener('click', (e) => {
-          e.stopPropagation(); // Prevent the click from triggering other handlers
-          //console.log("workClicked :" , workClicked);
-          const likeCount = heartIcon.previousElementSibling;
-          if (!workClicked.includes(item.id)) {  // check if the heart icon has already been clicked
-                item.likes += 1;  // Increment the like count
-                likeCount.textContent = parseInt(likeCount.textContent, 10) + 1;
-                workClicked.push(item.id); // adding the work's id in workClicked
-                incrementTotalLike();
-          }
-        });
-      }
+      // Add event listener on the heart icon to incremente one like
+      heartIcon.addEventListener("click", (event) => incrementLikes(event,item));
+      heartIcon.addEventListener("keydown", (event) => incrementLikes(event,item));        
 
       // Add event listener to open lightbox when clicked
       mediaItemAnchor.addEventListener('click', (e) => {
@@ -141,6 +151,42 @@ function displayEachWork(works, firstName) {
           lightboxController.openLightbox(index); // Open lightbox with selected item
       });
 
+
+     ////////////////////////////////////////////////////////////
+      /*
+      const effectuerTri = (event, index) => {
+        if (event.type === "keydown" && event.key !== "Enter") {
+            return; // Do nothing
+        }
+      
+        const nameDom = document.querySelector('#ph-bio-data h1');
+        let name = nameDom.textContent;
+        console.log("nameDom.textContent : ", nameDom.textContent);
+        console.log("tri avec index : ", index);
+      
+        const critere = [ "likes","title","date" ];
+        let newData = [...media];
+        console.log("effectuerTri  newData : ", newData);
+      
+        event.stopPropagation();  
+      
+        if (isDropdownListOn() === false) {
+            displayDropdownList(true);
+        } else {
+            selectOption(index);
+            let newSorted = trierWorks(newData, critere[index]);
+            console.log("effectuerTri  newSorted dans else avec critere : ",critere[index] ,newSorted);
+            displayMedia(newSorted, name);
+            displayNbTotalLikes(newSorted);
+        }
+      };
+      // Attach click and Enter listeners to each option for dropdown list
+      options.forEach((option, index) => {
+        option.addEventListener("click", (event) => effectuerTri(event, index));
+        option.addEventListener("keydown", (event) => effectuerTri(event, index));
+      });
+      */
+      /////////////////////////////////////////////////////////////////////////////
       // Append each media item to the gallery
       mediaGallery.appendChild(mediaItem);
     })
